@@ -10,7 +10,7 @@ task :clean do
   end
 
   puts "Removing built gem"
-  `rm -f svm-*.gem`
+  `rm -f piemaker-*.gem`
 end
 
 task :test do
@@ -19,12 +19,13 @@ end
 
 task :gem do
   raise NotImplementedError
-  `rm -f svm-*.gem`
-  `gem build svm.gemspec`
+  `rm -f piemaker-*.gem`
+  `gem build piemaker.gemspec`
 end
 
 task :install=>:gem do
-  `gem install --force svm-*.gem`
+  raise NotImplementedError
+  `gem install --force piemaker-*.gem`
 end
 
 task :profile do
@@ -33,10 +34,7 @@ task :profile do
   test_dir=File.join(File.dirname(__FILE__),"test")
 
   result = RubyProf.profile do
-    require File.join(File.dirname(__FILE__),"svm.rb")
-
-    # Monkeypatch Dhaka because it's blowing up on parser.inspect.
-    # class Dhaka::CompiledParser ; def self.grammar ; "" ; end ; end
+    require File.join(File.dirname(__FILE__),"piemaker.rb")
 
     if ENV["TEST"]
       require File.join(test_dir,"#{test}.rb")

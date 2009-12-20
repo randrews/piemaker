@@ -3,12 +3,20 @@ MidiMsg msg;
 // check if port is open
 if( !mout.open( 0 ) ) me.exit();
 
-3 => int color;
-if( me.args() ) me.arg(0) => Std.atoi => color;
+144 => msg.data1;
+0 => int target;
+0 => int color;
 
-// fill the message with data
-176 => msg.data1;
-0 => msg.data2;
-color => msg.data3;
+0 => int idx;
 
-mout.send( msg );
+if( me.args() ){
+  while(idx < me.args()){
+    <<< me.args() >>>;
+    me.arg(idx) => Std.atoi => target;
+    me.arg(idx+1) => Std.atoi => color;
+    target => msg.data2;
+    color => msg.data3;
+    mout.send( msg );
+    (idx + 2) => idx;
+  }
+}

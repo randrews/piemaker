@@ -1,6 +1,6 @@
 require "rubygems"
-require "activesupport" # For the base extensions, we'll drop this later
+# require "activesupport" # For the base extensions, we'll drop this later
 
-module SVM ; end
+module Piemaker ; end
 
 Dir[File.join(File.dirname(__FILE__), "lib/**/*.rb")].each{|f| require f}
