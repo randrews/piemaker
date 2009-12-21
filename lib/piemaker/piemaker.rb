@@ -1,16 +1,16 @@
+require File.join(File.dirname(__FILE__), "util.rb")
+
 module Piemaker
   MIDI_CK = File.join(File.dirname(__FILE__),"..","chuck","midi.ck")
-
-  LIGHT = 0x90
-  RED = 3
-  GREEN = 48
-  YELLOW = 51
 
   def self.new port = 8000
     Interface.new port
   end
 
   class Interface
+    include Util
+    include Commands
+
     attr_reader :chuck_pid, :port
 
     def initialize port = 8000
@@ -31,10 +31,6 @@ module Piemaker
       msg = OSC::Message.new "/launchpad/midi", "iii", a, b, c
       @socket.send msg, 0, "localhost", @port
     end
-  end
-
-  def self.button x, y
-    16*y + x
   end
 
   def self.fire
