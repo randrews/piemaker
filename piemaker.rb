@@ -1,5 +1,5 @@
 require "rubygems"
-# require "activesupport" # For the base extensions, we'll drop this later
+require "osc"
 
 module Piemaker ; end
 

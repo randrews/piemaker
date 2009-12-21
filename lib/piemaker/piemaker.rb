@@ -1,40 +1,35 @@
 module Piemaker
-  SEND_CK = File.join(File.dirname(__FILE__),"..","chuck","send.ck")
-  LIGHT_CK = File.join(File.dirname(__FILE__),"..","chuck","light.ck")
+  MIDI_CK = File.join(File.dirname(__FILE__),"..","chuck","midi.ck")
 
   LIGHT = 0x90
   RED = 3
   GREEN = 48
   YELLOW = 51
 
-  def self.start
-    fork do
-      exec "chuck --loop"
+  def self.new port = 8000
+    Interface.new port
+  end
+
+  class Interface
+    attr_reader :chuck_pid, :port
+
+    def initialize port = 8000
+      @port = port
+
+      @chuck_pid = fork do
+        exec "chuck #{MIDI_CK}:#{port} --loop"
+      end
+
+      @socket = OSC::UDPSocket.new
     end
-  end
 
-  def self.stop pid
-    `kill -9 #{pid}`
-  end
-
-  def self.run
-    pid = start
-    send 176, 0, 0
-    yield
-    stop pid
-  end
-
-  def self.send message, target, color
-    fork do 
-      exec "chuck + #{SEND_CK}:#{message}:#{target}:#{color}"
+    def stop
+      `kill -9 #{@chuck_pid}`
     end
-  end
 
-  def self.light colors
-    args = colors.map{|k,v| "#{k}:#{v}"}.join ":"
-
-    Thread.new do
-      `chuck + #{LIGHT_CK}:#{args}`
+    def send a, b, c
+      msg = OSC::Message.new "/launchpad/midi", "iii", a, b, c
+      @socket.send msg, 0, "localhost", @port
     end
   end
 
